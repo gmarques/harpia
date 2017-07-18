@@ -1,11 +1,11 @@
 @extends('layouts.modulos.integracaouema')
 
 @section('title')
-    Cursos
+    Turmas
 @stop
 
 @section('subtitle')
-    Integração dos cursos
+    Integração dos turmas
 @stop
 
 @section('content')

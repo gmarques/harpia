@@ -4,7 +4,6 @@ namespace Modulos\IntegracaoUema\Http\Controllers;
 
 use Modulos\Core\Http\Controller\BaseController;
 use Modulos\IntegracaoUema\Repositories\IntegracaoCursoRepository;
-use Modulos\IntegracaoUema\Repositories\IntegracaoTurmaRepository;
 
 class IntegracoesCursosController extends BaseController
 {
