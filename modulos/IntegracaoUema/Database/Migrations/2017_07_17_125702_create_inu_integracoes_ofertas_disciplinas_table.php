@@ -16,7 +16,8 @@ class CreateInuIntegracoesOfertasDisciplinasTable extends Migration
         Schema::create('inu_integracoes_ofertas_disciplinas', function (Blueprint $table) {
             $table->increments('ito_id');
             $table->integer('ito_ofd_id')->unsigned();
-            $table->string('ito_disciplina_prog', 45);
+            $table->string('ito_codigo_prog', 45);
+            $table->string('ito_disciplina_prog', 255);
 
             $table->timestamps();
 

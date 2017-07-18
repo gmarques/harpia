@@ -25,28 +25,30 @@
                 @for ($i = 0; $i < count($polos); $i++)
                     <div class="tab-pane @if($i === 0) active @endif" id="{{$polos[$i]['pol_id']}}">
                         @if(!empty($polos[$i]['matriculas']))
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Nome</th>
-                                        <th>COD. PROG</th>
-                                        <th>POLO</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($polos[$i]['matriculas'] as $matricula)
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
                                         <tr>
-                                            <td>{{$matricula['mat_id']}}</td>
-                                            <td>{{$matricula['pes_nome']}}</td>
-                                            <td><input type="text" class="form-control fc-codigo-prog" value="{{$matricula['itm_codigo_prog']}}"></td>
-                                            <td><input type="text" disabled="disabled" class="disabled form-control fc-polo" value="{{$matricula['itm_polo']}}"></td>
-                                            <td><a href="#" disabled="disabled" class="btn btn-primary disabled btn-mapear-aluno"><i class="fa fa-floppy-o"></i> Mapear aluno</a></td>
+                                            <th>#</th>
+                                            <th>Nome</th>
+                                            <th>COD. PROG</th>
+                                            <th>POLO</th>
+                                            <th>Ações</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($polos[$i]['matriculas'] as $matricula)
+                                            <tr>
+                                                <td>{{$matricula['mat_id']}}</td>
+                                                <td>{{$matricula['pes_nome']}}</td>
+                                                <td><input type="text" class="form-control fc-codigo-prog" value="{{$matricula['itm_codigo_prog']}}"></td>
+                                                <td><input type="text" disabled="disabled" class="disabled form-control fc-polo" value="{{$matricula['itm_polo']}}"></td>
+                                                <td><a href="#" disabled="disabled" class="btn btn-primary disabled btn-mapear-aluno"><i class="fa fa-floppy-o"></i> Mapear aluno</a></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         @endif
                     </div>
                 @endfor

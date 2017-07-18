@@ -12,6 +12,7 @@ class IntegracaoOfertaDisciplina extends BaseModel
 
     protected $fillable = [
         'ito_ofd_id',
+        'ito_codigo_prog',
         'ito_disciplina_prog'
     ];
 

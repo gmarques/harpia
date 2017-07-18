@@ -2,8 +2,10 @@
 
 namespace Modulos\IntegracaoUema\Http\Controllers;
 
+use Modulos\Academico\Repositories\OfertaDisciplinaRepository;
 use Modulos\Academico\Repositories\TurmaRepository;
 use Modulos\IntegracaoUema\Repositories\IntegracaoMatriculaRepository;
+use Modulos\IntegracaoUema\Repositories\IntegracaoOfertaDisciplinaRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Modulos\Core\Http\Controller\BaseController;
 use Modulos\IntegracaoUema\Repositories\IntegracaoCursoRepository;
@@ -11,17 +13,23 @@ use Modulos\Seguranca\Providers\ActionButton\Facades\ActionButton;
 
 class IntegracoesTurmasController extends BaseController
 {
-    protected $integracaoCursoRepository;
-    protected $turmaRepository;
+    protected $integracaoOfertaDisciplinaRepository;
     protected $integracaoMatriculaRepository;
+    protected $integracaoCursoRepository;
+    protected $ofertaDisciplinaRepository;
+    protected $turmaRepository;
 
     public function __construct(
-        IntegracaoCursoRepository $integracaoCursoRepository,
+        IntegracaoOfertaDisciplinaRepository $integracaoOfertaDisciplinaRepository,
         IntegracaoMatriculaRepository $integracaoMatriculaRepository,
+        IntegracaoCursoRepository $integracaoCursoRepository,
+        OfertaDisciplinaRepository $ofertaDisciplinaRepository,
         TurmaRepository $turmaRepository
     ) {
-        $this->integracaoCursoRepository = $integracaoCursoRepository;
+        $this->integracaoOfertaDisciplinaRepository = $integracaoOfertaDisciplinaRepository;
         $this->integracaoMatriculaRepository = $integracaoMatriculaRepository;
+        $this->integracaoCursoRepository = $integracaoCursoRepository;
+        $this->ofertaDisciplinaRepository = $ofertaDisciplinaRepository;
         $this->turmaRepository = $turmaRepository;
     }
 
@@ -78,6 +86,12 @@ class IntegracoesTurmasController extends BaseController
     {
         $turma = $this->turmaRepository->find($request->id);
 
+        if (!$turma) {
+            flash()->error('Turma não existe.');
+
+            return redirect()->back();
+        }
+
         $polos = $this->turmaRepository->getTurmaPolosByMatriculas($turma->trm_id);
 
         $polosData = [];
@@ -101,5 +115,31 @@ class IntegracoesTurmasController extends BaseController
         }
 
         return view('IntegracaoUema::turmas.alunos', ['turma' => $turma, 'polos' => $polosData]);
+    }
+
+    public function getOfertasDisciplinas(Request $request)
+    {
+        $turma = $this->turmaRepository->find($request->id);
+
+        if (!$turma) {
+            flash()->error('Turma não existe.');
+
+            return redirect()->back();
+        }
+
+        $ofertas = $this->integracaoOfertaDisciplinaRepository->getOfertasByTurma($turma->trm_id);
+
+        $ofertasperiodos = $this->integracaoOfertaDisciplinaRepository->groupDisciplinasByPeriodosLetivos($ofertas);
+
+        foreach ($ofertasperiodos as $kof => $oferta) {
+            foreach ($oferta['disciplinas'] as $kdi => $disciplina) {
+                $ofertasperiodos[$kof]['disciplinas'][$kdi]['qtd_matriculas'] = $this->ofertaDisciplinaRepository->countMatriculadosByOferta($disciplina['ofd_id']);
+
+                // TODO: Buscar quantidade de matriculados no sistema da PROG
+                $ofertasperiodos[$kof]['disciplinas'][$kdi]['qtd_matriculas_uema'] = 154;
+            }
+        }
+
+        return view('IntegracaoUema::turmas.ofertasdisciplinas', ['turma' => $turma, 'ofertasperiodos' => $ofertasperiodos]);
     }
 }
