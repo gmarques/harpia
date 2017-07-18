@@ -9,7 +9,11 @@ Route::group(['prefix' => 'integracaouema', 'middleware' => ['auth']], function 
 
     Route::group(['prefix' => 'turmas'], function () {
         Route::get('/', '\Modulos\IntegracaoUema\Http\Controllers\IntegracoesTurmasController@getIndex')->name('integracaouema.turmas.index');
-        Route::get('/ofertasdisciplinas/{id}', '\Modulos\IntegracaoUema\Http\Controllers\IntegracoesTurmasController@getOfertasDisciplinas')->name('integracaouema.turmas.ofertasdisciplinas');
         Route::get('/alunos/{id}', '\Modulos\IntegracaoUema\Http\Controllers\IntegracoesTurmasController@getAlunos')->name('integracaouema.turmas.alunos');
+    });
+
+    Route::group(['prefix' => 'ofertas'], function () {
+        Route::get('/{id}', '\Modulos\IntegracaoUema\Http\Controllers\IntegracoesOfertasDisciplinas@getIndex')->name('integracaouema.ofertas.index');
+        Route::get('/migrar/{id}', '\Modulos\IntegracaoUema\Http\Controllers\IntegracoesOfertasDisciplinas@getMigrar')->name('integracaouema.ofertas.migrar');
     });
 });

@@ -43,7 +43,7 @@
                                                 <td><input type="text" disabled="disabled" class="form-control disabled fc-disciplina-prog" value="{{$disciplina['ito_disciplina_prog']}}"></td>
                                                 <td class="text-center"><span data-toggle="tooltip" class="badge @if($disciplina['qtd_matriculas'] == $disciplina['qtd_matriculas_uema']) bg-green @else bg-red @endif">{{$disciplina['qtd_matriculas']}}/{{$disciplina['qtd_matriculas_uema']}}</span></td>
                                                 <td><a href="#" disabled="disabled" class="btn btn-primary disabled btn-mapear-disciplina"><i class="fa fa-floppy-o"></i> Mapear</a></td>
-                                                <td><a href="#" class="btn btn-warning btn-mapear-disciplina"><i class="fa fa-exchange"></i> Migrar notas</a></td>
+                                                <td><a href="{{route('integracaouema.ofertas.migrar', $disciplina['ofd_id'])}}" class="btn btn-warning btn-mapear-disciplina"><i class="fa fa-exchange"></i> Migrar notas</a></td>
                                             </tr>
                                         @endforeach
                                         </tbody>

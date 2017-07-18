@@ -60,7 +60,7 @@ class IntegracoesTurmasController extends BaseController
                         [
                             'classButton' => '',
                             'icon' => 'fa fa-exchange',
-                            'route' => 'integracaouema.turmas.ofertasdisciplinas',
+                            'route' => 'integracaouema.ofertas.index',
                             'parameters' => ['id' => $id],
                             'label' => 'Disciplinas',
                             'method' => 'get'
@@ -115,31 +115,5 @@ class IntegracoesTurmasController extends BaseController
         }
 
         return view('IntegracaoUema::turmas.alunos', ['turma' => $turma, 'polos' => $polosData]);
-    }
-
-    public function getOfertasDisciplinas(Request $request)
-    {
-        $turma = $this->turmaRepository->find($request->id);
-
-        if (!$turma) {
-            flash()->error('Turma não existe.');
-
-            return redirect()->back();
-        }
-
-        $ofertas = $this->integracaoOfertaDisciplinaRepository->getOfertasByTurma($turma->trm_id);
-
-        $ofertasperiodos = $this->integracaoOfertaDisciplinaRepository->groupDisciplinasByPeriodosLetivos($ofertas);
-
-        foreach ($ofertasperiodos as $kof => $oferta) {
-            foreach ($oferta['disciplinas'] as $kdi => $disciplina) {
-                $ofertasperiodos[$kof]['disciplinas'][$kdi]['qtd_matriculas'] = $this->ofertaDisciplinaRepository->countMatriculadosByOferta($disciplina['ofd_id']);
-
-                // TODO: Buscar quantidade de matriculados no sistema da PROG
-                $ofertasperiodos[$kof]['disciplinas'][$kdi]['qtd_matriculas_uema'] = 154;
-            }
-        }
-
-        return view('IntegracaoUema::turmas.ofertasdisciplinas', ['turma' => $turma, 'ofertasperiodos' => $ofertasperiodos]);
     }
 }
