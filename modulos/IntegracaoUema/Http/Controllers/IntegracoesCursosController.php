@@ -40,7 +40,7 @@ class IntegracoesCursosController extends BaseController
             })
             ->means('itc_action', 'trm_id')
             ->modify('itc_action', function ($id) {
-                return "<a href='#' class='btn btn-primary btn-integrar' disabled='disabled' data-trm_id='{$id}'><i class='fa fa-floppy-o'></i> Mapear curso</a>";
+                return "<a href='#' class='btn btn-primary disabled btn-integrar' disabled='disabled' data-trm_id='{$id}'><i class='fa fa-floppy-o'></i> Mapear curso</a>";
             })
             ->sortable(array('trm_id', 'crs_nome'));
         }

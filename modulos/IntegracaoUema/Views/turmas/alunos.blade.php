@@ -16,7 +16,7 @@
                     <li @if($i === 0) class="active" @endif>
                         <a href="#{{$polos[$i]['pol_id']}}" data-toggle="tab">
                             {{$polos[$i]['pol_nome']}}
-                            <span data-toggle="tooltip" class="badge bg-blue">{{count($polos[$i]['matriculas'])}}</span>
+                            <span data-toggle="tooltip" class="badge @if($polos[$i]['qtd_matriculas'] == $polos[$i]['qtd_matriculas_integradas']) bg-green @else bg-red @endif">{{$polos[$i]['qtd_matriculas']}}/{{$polos[$i]['qtd_matriculas_integradas']}}</span>
                         </a>
                     </li>
                 @endfor
@@ -32,6 +32,7 @@
                                         <th>Nome</th>
                                         <th>COD. PROG</th>
                                         <th>POLO</th>
+                                        <th>Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -39,8 +40,9 @@
                                         <tr>
                                             <td>{{$matricula['mat_id']}}</td>
                                             <td>{{$matricula['pes_nome']}}</td>
-                                            <td>{{$matricula['itm_codigo_prog']}}</td>
-                                            <td>{{$matricula['itm_polo']}}</td>
+                                            <td><input type="text" class="form-control fc-codigo-prog" value="{{$matricula['itm_codigo_prog']}}"></td>
+                                            <td><input type="text" disabled="disabled" class="disabled form-control fc-polo" value="{{$matricula['itm_polo']}}"></td>
+                                            <td><a href="#" disabled="disabled" class="btn btn-primary disabled btn-mapear-aluno"><i class="fa fa-floppy-o"></i> Mapear aluno</a></td>
                                         </tr>
                                     @endforeach
                                 </tbody>

@@ -20,6 +20,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
             ->join('gra_pessoas', 'alu_pes_id', '=', 'pes_id')
             ->where('mat_trm_id', $turmaid)
             ->where('mat_pol_id', $poloid)
+            ->orderby('pes_nome')
             ->get()->toArray();
 
         return $matriculas;

@@ -84,10 +84,19 @@ class IntegracoesTurmasController extends BaseController
         foreach ($polos as $polo) {
             $matriculasPolos = $this->integracaoMatriculaRepository->getMatriculasByTurmaPolo($turma->trm_id, $polo->pol_id);
 
+            $qtdMatriculasIntegradas = 0;
+            foreach ($matriculasPolos as $matricula) {
+                if (!empty($matricula['itm_codigo_prog'])) {
+                    $qtdMatriculasIntegradas++;
+                }
+            }
+
             $polosData[] = [
                 'pol_id' => $polo->pol_id,
                 'pol_nome' => $polo->pol_nome,
-                'matriculas' => $matriculasPolos
+                'matriculas' => $matriculasPolos,
+                'qtd_matriculas' => count($matriculasPolos),
+                'qtd_matriculas_integradas' => $qtdMatriculasIntegradas
             ];
         }
 
