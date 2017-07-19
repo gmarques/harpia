@@ -9,27 +9,21 @@ use Illuminate\Http\JsonResponse;
 
 class IntegracoesCursos
 {
-    protected $mssqlConnection;
     protected $integracaoCursoRepository;
 
-    public function __construct(MSSQLConnection $connection, IntegracaoCursoRepository $integracaoCursoRepository)
+    public function __construct(IntegracaoCursoRepository $integracaoCursoRepository)
     {
-        $this->mssqlConnection = $connection;
         $this->integracaoCursoRepository = $integracaoCursoRepository;
     }
 
     public function getNomeCurso($nomecurso)
     {
         try {
-            $sql = "SELECT * FROM [carlitosan].[cursos] WHERE CD_CURSO = '{$nomecurso}'";
+            $curso = $this->integracaoCursoRepository->uemaGetNomeCurso($nomecurso);
 
-            $curso = $this->mssqlConnection->fetch($sql);
-
-            if (!isset($curso['NOM_CURSO'])) {
+            if (!$curso) {
                 return new JsonResponse(null);
             }
-
-            $curso = iconv('ISO-8859-1', 'UTF-8', $curso['NOM_CURSO']);
 
             return new JsonResponse($curso);
         } catch (\Exception $e) {

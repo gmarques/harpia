@@ -4,12 +4,16 @@ namespace Modulos\IntegracaoUema\Repositories;
 
 use Modulos\Core\Repository\BaseRepository;
 use Modulos\IntegracaoUema\Models\IntegracaoCurso;
+use Modulos\IntegracaoUema\Util\MSSQLConnection;
 
 class IntegracaoCursoRepository extends BaseRepository
 {
-    public function __construct(IntegracaoCurso $integracaoCurso)
+    protected $mssqlConnection;
+
+    public function __construct(IntegracaoCurso $integracaoCurso, MSSQLConnection $connection)
     {
         $this->model = $integracaoCurso;
+        $this->mssqlConnection = $connection;
     }
 
     public function getCursosGraduacaoTecnologos()
@@ -30,5 +34,29 @@ class IntegracaoCursoRepository extends BaseRepository
             ->join('acd_turmas', 'trm_ofc_id', '=', 'ofc_id')
             ->join('acd_periodos_letivos', 'trm_per_id', '=', 'per_id')
             ->get();
+    }
+
+    /**
+     * Funções que buscam dados nas tabelas da UEMA
+     */
+    public function uemaGetNomeCurso($nomecurso)
+    {
+        try {
+            $sql = "SELECT * FROM [carlitosan].[cursos] WHERE CD_CURSO = '{$nomecurso}'";
+
+            $curso = $this->mssqlConnection->fetch($sql);
+
+            if (!isset($curso['NOM_CURSO'])) {
+                return false;
+            }
+
+            return iconv('ISO-8859-1', 'UTF-8', $curso['NOM_CURSO']);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return false;
+        }
     }
 }
