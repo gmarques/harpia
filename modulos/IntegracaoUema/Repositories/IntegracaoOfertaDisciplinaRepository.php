@@ -4,12 +4,16 @@ namespace Modulos\IntegracaoUema\Repositories;
 
 use Modulos\Core\Repository\BaseRepository;
 use Modulos\IntegracaoUema\Models\IntegracaoOfertaDisciplina;
+use Modulos\IntegracaoUema\Util\MSSQLConnection;
 
 class IntegracaoOfertaDisciplinaRepository extends BaseRepository
 {
-    public function __construct(IntegracaoOfertaDisciplina $integracaoOfertaDisciplina)
+    protected $mssqlConnection;
+
+    public function __construct(IntegracaoOfertaDisciplina $integracaoOfertaDisciplina, MSSQLConnection $connection)
     {
         $this->model = $integracaoOfertaDisciplina;
+        $this->mssqlConnection = $connection;
     }
 
     public function getMatriculadosByOferta($ofertaid)
@@ -56,5 +60,37 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         }
 
         return $periodos;
+    }
+
+    /**
+     * Funções que buscam dados nas tabelas da UEMA
+     */
+    public function uemaGetCountMatriculadosByOferta($codDisciplina, $semestre, $ano)
+    {
+        try {
+            $sql = "SELECT count(*) as qtd
+                    FROM(
+                        SELECT COD_ALUNO,COD_DISCi, NOM_DPL
+                        FROM [carlitosan].[m{$semestre}{$ano}] AS m
+                            INNER JOIN [carlitosan].[DISCIPLINA] AS d ON m.COD_DISCi = d.REG_DPL
+                        WHERE COD_DISCi = '{$codDisciplina}'
+                        GROUP BY COD_ALUNO,COD_DISCi, NOM_DPL
+                    ) as mm
+                    GROUP BY mm.COD_DISCi, mm.NOM_DPL";
+
+            $oferta = $this->mssqlConnection->fetch($sql);
+
+            if (!isset($oferta['qtd'])) {
+                return false;
+            }
+
+            return iconv('ISO-8859-1', 'UTF-8', $oferta['qtd']);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return false;
+        }
     }
 }
