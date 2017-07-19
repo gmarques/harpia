@@ -52,14 +52,31 @@ class IntegracoesOfertasDisciplinas extends BaseController
 
     public function getMigrar(Request $request)
     {
-        $oferta = $this->ofertaDisciplinaRepository->find($request->id);
+        $ofertaDisciplina = $this->ofertaDisciplinaRepository->find($request->id);
 
-        if (!$oferta) {
+        if (!$ofertaDisciplina) {
             flash()->error('Oferta não existe.');
 
             return redirect()->back();
         }
 
-        return view('IntegracaoUema::ofertas.migrar', ['oferta' => $oferta]);
+        $ofertaIntegrada = $this->integracaoOfertaDisciplinaRepository->search([['ito_ofd_id', '=', $ofertaDisciplina->ofd_id]], ['ito_codigo_prog'])->first();
+
+        if (!$ofertaIntegrada) {
+            flash()->error('Oferta não possui integração cadastrada.');
+
+            return redirect()->back();
+        }
+
+        $oferta = [
+            'dis_nome' => $ofertaDisciplina->modulodisciplina->disciplina->dis_nome,
+            'trm_nome' => $ofertaDisciplina->turma->trm_nome,
+            'per_nome' => $ofertaDisciplina->periodoletivo->per_nome,
+            'ito_codigo_prog' => $ofertaIntegrada->ito_codigo_prog
+        ];
+
+        $matriculados = $this->integracaoOfertaDisciplinaRepository->getMatriculadosByOferta($ofertaDisciplina->ofd_id);
+
+        return view('IntegracaoUema::ofertas.migrar', ['oferta' => $oferta, 'matriculados' => $matriculados]);
     }
 }

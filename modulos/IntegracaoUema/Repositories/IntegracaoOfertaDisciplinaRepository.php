@@ -12,6 +12,18 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         $this->model = $integracaoOfertaDisciplina;
     }
 
+    public function getMatriculadosByOferta($ofertaid)
+    {
+        return $this->model->select('alu_id', 'pes_nome', 'acd_matriculas_ofertas_disciplinas.*', 'itm_codigo_prog', 'itm_polo')
+            ->join('acd_matriculas_ofertas_disciplinas', 'mof_ofd_id', '=', 'ito_ofd_id')
+            ->join('acd_matriculas', 'mof_mat_id', '=', 'mat_id')
+            ->join('acd_alunos', 'mat_alu_id', '=', 'alu_id')
+            ->join('gra_pessoas', 'pes_id', '=', 'alu_pes_id')
+            ->leftJoin('inu_integracoes_matriculas', 'itm_mat_id', '=', 'mat_id')
+            ->where('ito_ofd_id', $ofertaid)
+            ->get();
+    }
+
     public function getOfertasByTurma($turmaid)
     {
         return $this->model->select('ito_id', 'ito_codigo_prog', 'ito_disciplina_prog', 'ofd_id', 'per_id', 'per_nome', 'dis_nome')

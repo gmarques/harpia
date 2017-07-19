@@ -10,6 +10,11 @@
 
 @section('content')
     @if(!is_null($polos))
+        <div class="row margin-bottom">
+            <div class="col-md-12 text-right">
+                <a href="#" class="btn btn-lg btn-success"><i class="fa fa-refresh"></i> Sincronizar matrículas</a>
+            </div>
+        </div>
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
                 @for ($i = 0; $i < count($polos); $i++)

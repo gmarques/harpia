@@ -11,7 +11,7 @@
 @section('content')
     @if(!is_null($tabela))
         <div class="box box-primary">
-            <div class="box-header">
+            <div class="box-body">
                 {!! $tabela->render() !!}
             </div>
         </div>
