@@ -4,12 +4,9 @@ namespace Modulos\IntegracaoUema\Repositories;
 
 use Modulos\Core\Repository\BaseRepository;
 use Modulos\IntegracaoUema\Models\IntegracaoCurso;
-use Modulos\IntegracaoUema\Traits\MSSQLConnection;
 
 class IntegracaoCursoRepository extends BaseRepository
 {
-    use MSSQLConnection;
-
     public function __construct(IntegracaoCurso $integracaoCurso)
     {
         $this->model = $integracaoCurso;

@@ -15,7 +15,8 @@ class IntegracaoCurso extends BaseModel
 
     protected $fillable = [
         'itc_crs_id',
-        'itc_codigo_prog'
+        'itc_codigo_prog',
+        'itc_nome_curso_prog'
     ];
 
     protected $searchable = [

@@ -38,11 +38,10 @@ class IntegracoesCursosController extends BaseController
             ->modify('itc_nome_curso_prog', function ($data) {
                 return "<input type='text' disabled='disabled' class='disabled form-control fc-nome-curso-prog' value='{$data->itc_nome_curso_prog}'>";
             })
-            ->means('itc_action', 'trm_id')
+            ->means('itc_action', 'crs_id')
             ->modify('itc_action', function ($id) {
-                return "<a href='#' class='btn btn-primary disabled btn-integrar' disabled='disabled' data-trm_id='{$id}'><i class='fa fa-floppy-o'></i> Mapear curso</a>";
-            })
-            ->sortable(array('trm_id', 'crs_nome'));
+                return "<a href='#' class='btn btn-primary disabled btn-integrar' disabled='disabled' data-crs_id='{$id}'><i class='fa fa-floppy-o'></i> Mapear curso</a>";
+            });
         }
 
         return view('IntegracaoUema::cursos.index', ['tabela' => $tabela]);
