@@ -104,4 +104,23 @@ class IntegracoesMatriculas
             return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function postMigrarNotaAluno(Request $request)
+    {
+        try {
+            $sync = $this->integracaoMatriculaRepository->uemaSetmigrarNotasOfertaAluno($request->ofd_id, $request->mat_id);
+
+            if ($sync) {
+                return new JsonResponse(['result' => $sync]);
+            }
+
+            return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

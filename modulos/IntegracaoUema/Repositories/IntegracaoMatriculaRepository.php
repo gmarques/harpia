@@ -13,18 +13,19 @@ use Illuminate\Support\Facades\DB;
 class IntegracaoMatriculaRepository extends BaseRepository
 {
     protected $mssqlConnection;
-    protected $turmaRepository;
     protected $integracaoCursoRepository;
+    protected $integracaoOfertaDisciplinaRepository;
 
     public function __construct(
         IntegracaoMatricula $integracaoMatricula,
         MSSQLConnection $connection,
-        TurmaRepository $turmaRepository,
-        IntegracaoCursoRepository $integracaoCursoRepository
+        IntegracaoCursoRepository $integracaoCursoRepository,
+        IntegracaoOfertaDisciplinaRepository $integracaoOfertaDisciplinaRepository
     ) {
         $this->model = $integracaoMatricula;
         $this->mssqlConnection = $connection;
         $this->integracaoCursoRepository = $integracaoCursoRepository;
+        $this->integracaoOfertaDisciplinaRepository = $integracaoOfertaDisciplinaRepository;
     }
 
     /**
@@ -247,6 +248,58 @@ class IntegracaoMatriculaRepository extends BaseRepository
             ];
 
             return $ret;
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return false;
+        }
+    }
+
+    public function getMatriculaJoinNotasByOferta($ofertaid, $matriculaid)
+    {
+        $matriculas = $this->model->select('itm_mat_id', 'itm_codigo_prog', 'itm_polo', 'mof_nota1', 'mof_nota2', 'mof_nota3', 'mof_conceito', 'mof_recuperacao', 'mof_final', 'mof_mediafinal')
+            ->join('acd_matriculas_ofertas_disciplinas', 'mof_mat_id', '=', 'itm_mat_id')
+            ->where('mof_ofd_id', $ofertaid)
+            ->where('itm_mat_id', $matriculaid)
+            ->first();
+
+        return $matriculas;
+    }
+
+    public function uemaSetmigrarNotasOfertaAluno($ofertaid, $matriculaid)
+    {
+        $oferta = $this->integracaoOfertaDisciplinaRepository->getDisciplinaJoinOferta($ofertaid);
+        $matricula = $this->getMatriculaJoinNotasByOferta($ofertaid, $matriculaid);
+
+        if (!$oferta || !$matricula) {
+            return false;
+        }
+
+        $codDisc = $oferta->ito_codigo_prog;
+        $semestre = substr($oferta->per_nome, -1);
+        $ano = substr($oferta->per_nome, -4, 2);
+        $codProg = $matricula->itm_codigo_prog;
+
+        try {
+            $sql = "UPDATE [carlitosan].[m{$semestre}{$ano}] SET ";
+
+            if (!is_null($matricula->mof_nota1)) {
+                $sql .= " NOTA01='{$matricula->mof_nota1}', NOTA02='{$matricula->mof_nota1}', NOTA03='{$matricula->mof_nota1}', NOTA04='-1' ";
+            }
+
+            if (!is_null($matricula->mof_final)) {
+                $sql .= " NOTA05='{$matricula->mof_final}' ";
+            }
+
+            if (!is_null($matricula->mof_mediafinal)) {
+                $sql .= " media='{$matricula->mof_mediafinal}' ";
+            }
+
+            $sql .= " WHERE COD_ALUNO like ('%{$codProg}%') AND COD_DISCi='{$codDisc}' ";
+
+            return $this->mssqlConnection->query($sql);
         } catch (\Exception $e) {
             if (config('app.debug')) {
                 throw $e;

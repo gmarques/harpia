@@ -62,7 +62,7 @@
                                         && $matricula['mof_nota1'] != null
                                         && $matricula['mof_nota1'] != $matricula['prog_nota1']
                                     )
-                                        <a href="#"class="btn btn-warning btn-migrar-nota"><i class="fa fa-exchange"></i> Migrar</a>
+                                        <a href="#"class="btn btn-warning btn-migrar-nota" data-ofd_id="{{$matricula['mof_ofd_id']}}" data-mat_id="{{$matricula['mof_mat_id']}}"><i class="fa fa-exchange"></i> Migrar</a>
                                     @endif</td>
                             </tr>
                         @endforeach
@@ -77,3 +77,40 @@
         </div>
     @endif
 @stop
+
+
+@section('scripts')
+    <script type="text/javascript">
+
+        $(".btn-migrar-nota").click(function(e) {
+            e.preventDefault();
+
+            var token = "{{ csrf_token() }}";
+            var currentTarget = $(e.currentTarget);
+
+            var ofd_id = currentTarget.data('ofd_id');
+            var mat_id = currentTarget.data('mat_id');
+
+            if (!ofd_id || !mat_id) {
+                toastr.error('Todas as informções da matrícula são obrigatórios', '', {timeOut: 8000, progressBar: true});
+            }
+
+            var data = {
+                ofd_id: ofd_id,
+                mat_id: mat_id,
+                _token: token
+            };
+
+            $.harpia.httppost('{{url("/")}}/integracaouema/async/matriculas/migrarnotaaluno', data).done(function (response) {
+                if(!$.isEmptyObject(response)) {
+                    toastr.success('Notas migradas com sucesso', '', {timeOut: 5000, progressBar: true});
+
+//                    currentTarget.attr('disabled', 'disabled').addClass('disabled');
+                } else {
+                    toastr.error('Erro ao tentar integrar as informações da disciplina', '', {timeOut: 5000, progressBar: true});
+                }
+            });
+        });
+
+    </script>
+@endsection

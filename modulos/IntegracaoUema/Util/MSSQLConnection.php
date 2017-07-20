@@ -51,4 +51,15 @@ class MSSQLConnection
             return $e->getMessage();
         }
     }
+
+    public function query($sql)
+    {
+        try {
+            $query = $this->conn->query($sql);
+
+            return $query;
+        } catch (\PDOException $e) {
+            return $e->getMessage();
+        }
+    }
 }

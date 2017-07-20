@@ -64,6 +64,15 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         return $periodos;
     }
 
+    public function getDisciplinaJoinOferta($ofertaid)
+    {
+        return $this->model->select('ito_id', 'ito_codigo_prog', 'ito_disciplina_prog', 'ofd_id', 'per_id', 'per_nome')
+            ->join('acd_ofertas_disciplinas', 'ito_ofd_id', '=', 'ofd_id')
+            ->join('acd_periodos_letivos', 'ofd_per_id', '=', 'per_id')
+            ->where('ofd_id', $ofertaid)
+            ->first();
+    }
+
     /**
      * Funções que buscam dados nas tabelas da UEMA
      */
