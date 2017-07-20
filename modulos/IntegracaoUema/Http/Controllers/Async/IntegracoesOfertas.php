@@ -3,7 +3,6 @@
 namespace Modulos\IntegracaoUema\Http\Controllers\Async;
 
 use Modulos\IntegracaoUema\Repositories\IntegracaoOfertaDisciplinaRepository;
-use Modulos\IntegracaoUema\Util\MSSQLConnection;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 

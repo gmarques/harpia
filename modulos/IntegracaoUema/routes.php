@@ -28,5 +28,9 @@ Route::group(['prefix' => 'integracaouema', 'middleware' => ['auth']], function 
             Route::get('/{coddisciplina}/{semestre}/{ano}', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesOfertas@getDisciplinaInfo')->name('integracaouema.async.ofertas.getdisciplinainfo');
             Route::post('/integrar', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesOfertas@postIntegrar')->name('integracaouema.async.ofertas.integrar');
         });
+
+        Route::group(['prefix' => 'matriculas'], function () {
+            Route::get('/{codprog}', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@getMatriculaInfo')->name('integracaouema.async.matriculas.getmatriculainfo');
+        });
     });
 });

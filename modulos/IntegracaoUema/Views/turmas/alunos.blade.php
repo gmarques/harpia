@@ -46,7 +46,7 @@
                                             <tr>
                                                 <td>{{$matricula['mat_id']}}</td>
                                                 <td>{{$matricula['pes_nome']}}</td>
-                                                <td><input type="text" class="form-control fc-codigo-prog" value="{{$matricula['itm_codigo_prog']}}"></td>
+                                                <td><input type="text" class="form-control fc-cod-prog" value="{{$matricula['itm_codigo_prog']}}"></td>
                                                 <td><input type="text" disabled="disabled" class="disabled form-control fc-polo" value="{{$matricula['itm_polo']}}"></td>
                                                 <td><a href="#" disabled="disabled" class="btn btn-primary disabled btn-mapear-aluno"><i class="fa fa-floppy-o"></i> Mapear aluno</a></td>
                                             </tr>
@@ -66,3 +66,24 @@
         </div>
     @endif
 @stop
+
+@section('scripts')
+    <script type="text/javascript">
+        $(".fc-cod-prog").blur(function(e){
+            var linhaSelecionada = $(e.currentTarget).closest('tr');
+            var codProg = e.currentTarget.value;
+
+            $.harpia.httpget('{{url("/")}}/integracaouema/async/matriculas/' + codProg).done(function (response) {
+                if(!$.isEmptyObject(response)) {
+                    linhaSelecionada.find('.fc-polo').val(response.polo + " :: " + response.nome);
+                    linhaSelecionada.find('.btn-mapear-aluno').removeAttr('disabled').removeClass('disabled');
+                } else {
+                    toastr.error('Matrícula não localizada', '', {timeOut: 5000, progressBar: true});
+
+                    linhaSelecionada.find('.fc-polo').val('');
+                    linhaSelecionada.find('.btn-mapear-aluno').attr('disabled', 'disabled').addClass('disabled');
+                }
+            });
+        });
+    </script>
+@endsection
