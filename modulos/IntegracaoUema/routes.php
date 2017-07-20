@@ -31,6 +31,7 @@ Route::group(['prefix' => 'integracaouema', 'middleware' => ['auth']], function 
 
         Route::group(['prefix' => 'matriculas'], function () {
             Route::get('/{codprog}', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@getMatriculaInfo')->name('integracaouema.async.matriculas.getmatriculainfo');
+            Route::post('/integrar', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@postIntegrar')->name('integracaouema.async.matriculas.integrar');
         });
     });
 });

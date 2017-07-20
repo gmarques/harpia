@@ -17,6 +17,7 @@ class CreateInuIntegracoesMatriculasTable extends Migration
             $table->increments('itm_id');
             $table->integer('itm_mat_id')->unsigned();
             $table->string('itm_codigo_prog', 45);
+            $table->string('itm_nome_prog', 150);
             $table->string('itm_polo', 45);
 
             $table->timestamps();

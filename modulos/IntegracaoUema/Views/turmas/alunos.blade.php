@@ -36,17 +36,19 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Nome</th>
-                                            <th>COD. PROG</th>
-                                            <th>POLO</th>
-                                            <th>Ações</th>
+                                            <th width="140px">COD. PROG</th>
+                                            <th>NOME PROG</th>
+                                            <th width="80px">POLO</th>
+                                            <th width="140px">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($polos[$i]['matriculas'] as $matricula)
-                                            <tr>
+                                            <tr data-mat_id="{{$matricula['mat_id']}}">
                                                 <td>{{$matricula['mat_id']}}</td>
-                                                <td>{{$matricula['pes_nome']}}</td>
+                                                <td class="fc-pes-nome"><p>{{$matricula['pes_nome']}}</p></td>
                                                 <td><input type="text" class="form-control fc-cod-prog" value="{{$matricula['itm_codigo_prog']}}"></td>
+                                                <td><input type="text" disabled="disabled" class="disabled form-control fc-nome-prog" value="{{$matricula['itm_nome_prog']}}"></td>
                                                 <td><input type="text" disabled="disabled" class="disabled form-control fc-polo" value="{{$matricula['itm_polo']}}"></td>
                                                 <td><a href="#" disabled="disabled" class="btn btn-primary disabled btn-mapear-aluno"><i class="fa fa-floppy-o"></i> Mapear aluno</a></td>
                                             </tr>
@@ -75,13 +77,51 @@
 
             $.harpia.httpget('{{url("/")}}/integracaouema/async/matriculas/' + codProg).done(function (response) {
                 if(!$.isEmptyObject(response)) {
-                    linhaSelecionada.find('.fc-polo').val(response.polo + " :: " + response.nome);
+                    linhaSelecionada.find('.fc-nome-prog').val(response.nome);
+                    linhaSelecionada.find('.fc-polo').val(response.polo);
+
                     linhaSelecionada.find('.btn-mapear-aluno').removeAttr('disabled').removeClass('disabled');
                 } else {
                     toastr.error('Matrícula não localizada', '', {timeOut: 5000, progressBar: true});
 
+                    linhaSelecionada.find('.fc-nome-prog').val('');
                     linhaSelecionada.find('.fc-polo').val('');
                     linhaSelecionada.find('.btn-mapear-aluno').attr('disabled', 'disabled').addClass('disabled');
+                }
+            });
+        });
+
+        $(".btn-mapear-aluno").click(function(e) {
+            e.preventDefault();
+
+            var token = "{{ csrf_token() }}";
+            var linhaSelecionada = $(e.currentTarget).closest('tr');
+            var currentTarget = $(e.currentTarget);
+
+            var mat_id = linhaSelecionada.data('mat_id');
+            var codigo_prog = linhaSelecionada.find('.fc-cod-prog').val();
+            var nome_prog = linhaSelecionada.find('.fc-nome-prog').val();
+            var polo = linhaSelecionada.find('.fc-polo').val();
+
+            if (!mat_id || !codigo_prog || !nome_prog || !polo) {
+                toastr.error('As informações da matrícula são obrigatórias', '', {timeOut: 5000, progressBar: true});
+            }
+
+            var data = {
+                mat_id: mat_id,
+                codigo_prog: codigo_prog,
+                nome_prog: nome_prog,
+                polo: polo,
+                _token: token
+            };
+
+            $.harpia.httppost('{{url("/")}}/integracaouema/async/matriculas/integrar', data).done(function (response) {
+                if(!$.isEmptyObject(response)) {
+                    toastr.success('Informações integradas com sucesso', '', {timeOut: 5000, progressBar: true});
+
+                    currentTarget.attr('disabled', 'disabled').addClass('disabled');
+                } else {
+                    toastr.error('Erro ao tentar integrar as informações da matrícula', '', {timeOut: 5000, progressBar: true});
                 }
             });
         });

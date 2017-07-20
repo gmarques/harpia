@@ -26,7 +26,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
      */
     public function getMatriculasByTurmaPolo($turmaid, $poloid)
     {
-        $matriculas = $this->model->select('itm_id', 'itm_mat_id', 'itm_codigo_prog', 'itm_polo', 'mat_id', 'pes_nome')
+        $matriculas = $this->model->select('itm_id', 'itm_mat_id', 'itm_codigo_prog', 'itm_nome_prog', 'itm_polo', 'mat_id', 'pes_nome')
             ->rightJoin('acd_matriculas', 'itm_mat_id', '=', 'mat_id')
             ->join('acd_alunos', 'mat_alu_id', '=', 'alu_id')
             ->join('gra_pessoas', 'alu_pes_id', '=', 'pes_id')
@@ -67,7 +67,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
 
             $ret = [
                 'nome' => iconv('ISO-8859-1', 'UTF-8', $aluno['NOM_ALU']),
-                'polo' => iconv('ISO-8859-1', 'UTF-8', $aluno['polo'])
+                'polo' => mb_strtoupper(trim(iconv('ISO-8859-1', 'UTF-8', $aluno['polo'])))
             ];
 
             return $ret;

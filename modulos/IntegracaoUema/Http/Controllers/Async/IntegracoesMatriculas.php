@@ -40,4 +40,36 @@ class IntegracoesMatriculas
             return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function postIntegrar(Request $request)
+    {
+        try {
+            $matricula = $this->integracaoMatriculaRepository->search([['itm_mat_id', '=', $request->mat_id]])->first();
+
+            if ($matricula) {
+                $matricula->itm_codigo_prog = mb_strtoupper(trim($request->codigo_prog));
+                $matricula->itm_nome_prog = $request->nome_prog;
+                $matricula->itm_polo = mb_strtoupper(trim($request->polo));
+
+                $matricula->save();
+            } else {
+                $matriculaData = [
+                    "itm_mat_id" => $request->mat_id,
+                    "itm_codigo_prog" => $request->codigo_prog,
+                    "itm_nome_prog" => $request->nome_prog,
+                    "itm_polo" => $request->polo
+                ];
+
+                $matricula = $this->integracaoMatriculaRepository->create($matriculaData);
+            }
+
+            return new JsonResponse(['result' => $matricula->itm_mat_id]);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

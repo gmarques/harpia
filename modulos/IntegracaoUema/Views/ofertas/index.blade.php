@@ -96,6 +96,8 @@
         });
 
         $(".btn-mapear-disciplina").click(function(e) {
+            e.preventDefault();
+
             var token = "{{ csrf_token() }}";
             var linhaSelecionada = $(e.currentTarget).closest('tr');
             var currentTarget = $(e.currentTarget);
