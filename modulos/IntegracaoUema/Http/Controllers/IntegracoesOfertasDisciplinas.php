@@ -3,6 +3,7 @@
 namespace Modulos\IntegracaoUema\Http\Controllers;
 
 use Modulos\Core\Http\Controller\BaseController;
+use Modulos\IntegracaoUema\Repositories\IntegracaoMatriculaRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Modulos\IntegracaoUema\Repositories\IntegracaoOfertaDisciplinaRepository;
 use Modulos\Academico\Repositories\OfertaDisciplinaRepository;
@@ -11,15 +12,18 @@ use Modulos\Academico\Repositories\TurmaRepository;
 class IntegracoesOfertasDisciplinas extends BaseController
 {
     protected $integracaoOfertaDisciplinaRepository;
+    protected $integracaoMatriculaRepository;
     protected $ofertaDisciplinaRepository;
     protected $turmaRepository;
 
     public function __construct(
         IntegracaoOfertaDisciplinaRepository $integracaoOfertaDisciplinaRepository,
+        IntegracaoMatriculaRepository $integracaoMatriculaRepository,
         OfertaDisciplinaRepository $ofertaDisciplinaRepository,
         TurmaRepository $turmaRepository
     ) {
         $this->integracaoOfertaDisciplinaRepository = $integracaoOfertaDisciplinaRepository;
+        $this->integracaoMatriculaRepository = $integracaoMatriculaRepository;
         $this->ofertaDisciplinaRepository = $ofertaDisciplinaRepository;
         $this->turmaRepository = $turmaRepository;
     }
@@ -79,6 +83,23 @@ class IntegracoesOfertasDisciplinas extends BaseController
         ];
 
         $matriculados = $this->integracaoOfertaDisciplinaRepository->getMatriculadosByOferta($ofertaDisciplina->ofd_id);
+
+        $semestre = substr($oferta['per_nome'], -1);
+        $ano = substr($oferta['per_nome'], -4, 2);
+
+        foreach ($matriculados as $mat => $matricula) {
+            $notasProg = $this->integracaoMatriculaRepository->uemaGetAlunoNotasByDisciplinaProg($matricula['itm_codigo_prog'], $ofertaIntegrada->ito_codigo_prog, $semestre, $ano);
+
+            $matriculados[$mat]['prog_nota1'] = null;
+            $matriculados[$mat]['prog_final'] = null;
+            $matriculados[$mat]['prog_media'] = null;
+
+            if ($notasProg) {
+                $matriculados[$mat]['prog_nota1'] = number_format((float) $notasProg['nota1'], 2);
+                $matriculados[$mat]['prog_final'] = number_format((float) $notasProg['nota5'], 2);
+                $matriculados[$mat]['prog_media'] = number_format((float) $notasProg['media'], 2);
+            }
+        }
 
         return view('IntegracaoUema::ofertas.migrar', ['oferta' => $oferta, 'matriculados' => $matriculados]);
     }

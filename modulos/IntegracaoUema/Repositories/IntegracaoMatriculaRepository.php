@@ -218,4 +218,41 @@ class IntegracaoMatriculaRepository extends BaseRepository
             return false;
         }
     }
+
+    public function uemaGetAlunoNotasByDisciplinaProg($codAluno, $codDisciplina, $semestre, $ano)
+    {
+        try {
+            $sql = "SELECT COD_ALUNO, polo, COD_DISCi, NOTA01, NOTA02, NOTA03, NOTA04, NOTA05, MEDIA
+                    FROM [carlitosan].[m{$semestre}{$ano}]
+                    WHERE
+                      COD_DISCi = '{$codDisciplina}'
+                      AND COD_ALUNO like ('%{$codAluno}%')";
+
+            $aluno = $this->mssqlConnection->fetch($sql);
+
+            if (!isset($aluno['COD_ALUNO']) || !isset($aluno['COD_DISCi'])) {
+                return false;
+            }
+
+            $ret = [
+                'cod_aluno' => iconv('ISO-8859-1', 'UTF-8', $aluno['COD_ALUNO']),
+                'polo' => iconv('ISO-8859-1', 'UTF-8', $aluno['polo']),
+                'cod_disc' => iconv('ISO-8859-1', 'UTF-8', $aluno['COD_DISCi']),
+                'nota1' => iconv('ISO-8859-1', 'UTF-8', $aluno['NOTA01']),
+                'nota2' => iconv('ISO-8859-1', 'UTF-8', $aluno['NOTA02']),
+                'nota3' => iconv('ISO-8859-1', 'UTF-8', $aluno['NOTA03']),
+                'nota4' => iconv('ISO-8859-1', 'UTF-8', $aluno['NOTA04']),
+                'nota5' => iconv('ISO-8859-1', 'UTF-8', $aluno['NOTA05']),
+                'media' => iconv('ISO-8859-1', 'UTF-8', $aluno['MEDIA'])
+            ];
+
+            return $ret;
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return false;
+        }
+    }
 }

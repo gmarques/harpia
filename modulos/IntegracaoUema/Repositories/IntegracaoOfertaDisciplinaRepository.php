@@ -25,7 +25,9 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
             ->join('gra_pessoas', 'pes_id', '=', 'alu_pes_id')
             ->leftJoin('inu_integracoes_matriculas', 'itm_mat_id', '=', 'mat_id')
             ->where('ito_ofd_id', $ofertaid)
-            ->get();
+            ->orderby('pes_nome')
+            ->get()
+            ->toArray();
     }
 
     public function getOfertasByTurma($turmaid)

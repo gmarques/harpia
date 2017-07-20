@@ -27,22 +27,28 @@
                             <th width="40px">POL</th>
                             <th>Nome</th>
                             <th>Nota</th>
+                            <th>Nota PROG</th>
                             <th>Final</th>
+                            <th>Final PROG</th>
                             <th>Media</th>
+                            <th>Media PROG</th>
                             <th>Situação</th>
                             <th width="100px">Ações</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($matriculados as $matricula)
-                            <tr>
+                            <tr @if(isset($matricula['itm_codigo_prog']) && $matricula['mof_nota1'] != null && $matricula['mof_nota1'] != $matricula['prog_nota1']) style="background-color: #f2dede;" @endif>
                                 <td>{{$matricula['mof_id']}}</td>
                                 <td>{{$matricula['itm_codigo_prog']}}</td>
                                 <td>{{$matricula['itm_polo']}}</td>
                                 <td>{{$matricula['pes_nome']}}</td>
                                 <td>{{$matricula['mof_nota1']}}</td>
+                                <td>{{$matricula['prog_nota1']}}</td>
                                 <td>{{$matricula['mof_final']}}</td>
+                                <td>{{$matricula['prog_final']}}</td>
                                 <td>{{$matricula['mof_mediafinal']}}</td>
+                                <td>{{$matricula['prog_media']}}</td>
                                 <td>
                                     <span
                                         data-toggle="tooltip"
@@ -50,7 +56,14 @@
                                             {{$matricula['mof_situacao_matricula']}}
                                     </span>
                                 </td>
-                                <td>@if(isset($matricula['itm_codigo_prog']))<a href="#"class="btn btn-warning btn-migrar-nota"><i class="fa fa-exchange"></i> Migrar</a>@endif</td>
+                                <td>
+                                    @if(
+                                        isset($matricula['itm_codigo_prog'])
+                                        && $matricula['mof_nota1'] != null
+                                        && $matricula['mof_nota1'] != $matricula['prog_nota1']
+                                    )
+                                        <a href="#"class="btn btn-warning btn-migrar-nota"><i class="fa fa-exchange"></i> Migrar</a>
+                                    @endif</td>
                             </tr>
                         @endforeach
                         </tbody>
