@@ -2,15 +2,22 @@
 
 namespace Modulos\IntegracaoUema\Http\Controllers\Async;
 
+use Modulos\Academico\Repositories\TurmaRepository;
 use Modulos\IntegracaoUema\Repositories\IntegracaoMatriculaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class IntegracoesMatriculas
 {
-    public function __construct(IntegracaoMatriculaRepository $integracaoMatriculaRepository)
+    protected $integracaoMatriculaRepository;
+    protected $turmaRepository;
+
+    public function __construct(
+        IntegracaoMatriculaRepository $integracaoMatriculaRepository,
+        TurmaRepository $turmaRepository)
     {
         $this->integracaoMatriculaRepository = $integracaoMatriculaRepository;
+        $this->turmaRepository = $turmaRepository;
     }
 
     /**
@@ -64,6 +71,31 @@ class IntegracoesMatriculas
             }
 
             return new JsonResponse(['result' => $matricula->itm_mat_id]);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function postIntegrarTurma(Request $request)
+    {
+        try {
+            $turma = $this->turmaRepository->find($request->trm_id);
+
+            if (!$turma) {
+                return new JsonResponse(null, JsonResponse::HTTP_NOT_FOUND);
+            }
+
+            $sync = $this->integracaoMatriculaRepository->sincronizarMatriculasTurmaUema($turma);
+
+            if ($sync) {
+                return new JsonResponse(['result' => $sync]);
+            }
+
+            return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         } catch (\Exception $e) {
             if (config('app.debug')) {
                 throw $e;

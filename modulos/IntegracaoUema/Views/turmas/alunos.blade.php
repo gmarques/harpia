@@ -12,7 +12,7 @@
     @if(!is_null($polos))
         <div class="row margin-bottom">
             <div class="col-md-12 text-right">
-                <a href="#" class="btn btn-lg btn-success"><i class="fa fa-refresh"></i> Sincronizar matrículas</a>
+                <a href="#" class="btn btn-lg btn-success btn-sincronizar-matriculas" data-trm_id="{{$turma->trm_id}}"><i class="fa fa-refresh"></i> Sincronizar matrículas</a>
             </div>
         </div>
         <div class="nav-tabs-custom">
@@ -71,6 +71,8 @@
 
 @section('scripts')
     <script type="text/javascript">
+        var token = "{{ csrf_token() }}";
+
         $(".fc-cod-prog").blur(function(e){
             var linhaSelecionada = $(e.currentTarget).closest('tr');
             var codProg = e.currentTarget.value;
@@ -94,7 +96,6 @@
         $(".btn-mapear-aluno").click(function(e) {
             e.preventDefault();
 
-            var token = "{{ csrf_token() }}";
             var linhaSelecionada = $(e.currentTarget).closest('tr');
             var currentTarget = $(e.currentTarget);
 
@@ -120,6 +121,28 @@
                     toastr.success('Informações integradas com sucesso', '', {timeOut: 5000, progressBar: true});
 
                     currentTarget.attr('disabled', 'disabled').addClass('disabled');
+                } else {
+                    toastr.error('Erro ao tentar integrar as informações da matrícula', '', {timeOut: 5000, progressBar: true});
+                }
+            });
+        });
+
+        $(".btn-sincronizar-matriculas").click(function(e) {
+            e.preventDefault();
+            var currentTarget = $(e.currentTarget);
+
+            currentTarget.attr('disabled', 'disabled').addClass('disabled');
+
+            var data = {
+                trm_id: currentTarget.data('trm_id'),
+                _token: token
+            };
+
+            $.harpia.httppost('{{url("/")}}/integracaouema/async/matriculas/integrarturma', data).done(function (response) {
+                if(!$.isEmptyObject(response)) {
+                    toastr.success('Informações integradas com sucesso', '', {timeOut: 3000, progressBar: true});
+
+                    setTimeout(function(){ location.reload(); }, 3000);
                 } else {
                     toastr.error('Erro ao tentar integrar as informações da matrícula', '', {timeOut: 5000, progressBar: true});
                 }

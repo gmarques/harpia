@@ -13,6 +13,7 @@ class IntegracaoMatricula extends BaseModel
     protected $fillable = [
         'itm_mat_id',
         'itm_codigo_prog',
+        'itm_nome_prog',
         'itm_polo'
     ];
 
