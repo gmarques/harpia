@@ -46,16 +46,24 @@
             var linhaSelecionada = $(e.currentTarget).closest('tr');
             var currentTarget = $(e.currentTarget);
 
+            var crs_id = currentTarget.data('crs_id');
+            var codigo_prog = linhaSelecionada.find('.fc-cod-prog').val();
+            var nome_curso = linhaSelecionada.find('.fc-nome-curso-prog').val();
+
+            if (!crs_id || !codigo_prog || !nome_curso) {
+                toastr.error('O código do curso é obrigatório', '', {timeOut: 5000, progressBar: true});
+            }
+
             var data = {
-                crs_id: currentTarget.data('crs_id'),
-                codigo_prog: linhaSelecionada.find('.fc-cod-prog').val(),
-                nome_curso: linhaSelecionada.find('.fc-nome-curso-prog').val(),
+                crs_id: crs_id,
+                codigo_prog: codigo_prog,
+                nome_curso: nome_curso,
                 _token: token
             };
 
             $.harpia.httppost('{{url("/")}}/integracaouema/async/cursos/integrar', data).done(function (response) {
                 if(!$.isEmptyObject(response)) {
-                    toastr.success('Informações integrdas com sucesso', '', {timeOut: 5000, progressBar: true});
+                    toastr.success('Informações integradas com sucesso', '', {timeOut: 5000, progressBar: true});
 
                     currentTarget.data('crs_id', response.result);
                     currentTarget.attr('disabled', 'disabled').addClass('disabled');

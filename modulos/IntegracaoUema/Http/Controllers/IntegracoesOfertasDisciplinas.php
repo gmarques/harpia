@@ -46,7 +46,6 @@ class IntegracoesOfertasDisciplinas extends BaseController
                 $ano = substr($oferta['per_nome'], -4, 2);
                 $qtdMatriculasUema = $this->integracaoOfertaDisciplinaRepository->uemaGetCountMatriculadosByOferta($disciplina['ito_codigo_prog'], $periodo, $ano);
 
-                // TODO: Buscar quantidade de matriculados no sistema da PROG
                 $ofertasperiodos[$kof]['disciplinas'][$kdi]['qtd_matriculas_uema'] = $qtdMatriculasUema;
             }
         }

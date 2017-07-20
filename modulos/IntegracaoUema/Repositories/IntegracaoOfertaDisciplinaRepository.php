@@ -69,14 +69,9 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
     {
         try {
             $sql = "SELECT count(*) as qtd
-                    FROM(
-                        SELECT COD_ALUNO,COD_DISCi, NOM_DPL
-                        FROM [carlitosan].[m{$semestre}{$ano}] AS m
-                            INNER JOIN [carlitosan].[DISCIPLINA] AS d ON m.COD_DISCi = d.REG_DPL
-                        WHERE COD_DISCi = '{$codDisciplina}'
-                        GROUP BY COD_ALUNO,COD_DISCi, NOM_DPL
-                    ) as mm
-                    GROUP BY mm.COD_DISCi, mm.NOM_DPL";
+                    FROM [carlitosan].[m{$semestre}{$ano}] AS m
+                    WHERE COD_DISCi = '{$codDisciplina}'
+                    GROUP BY COD_DISCi";
 
             $oferta = $this->mssqlConnection->fetch($sql);
 
@@ -85,6 +80,40 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
             }
 
             return iconv('ISO-8859-1', 'UTF-8', $oferta['qtd']);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return false;
+        }
+    }
+
+    public function uemaGetDisciplinaInfo($codDisciplina, $semestre, $ano)
+    {
+        try {
+            $sql = "SELECT mm.COD_DISCi, mm.NOM_DPL, count(*) as qtd
+                    FROM(
+                        SELECT COD_ALUNO,COD_DISCi, NOM_DPL
+                        FROM [carlitosan].[m{$semestre}{$ano}] AS m
+                            INNER JOIN [carlitosan].[DISCIPLINA] AS d ON m.COD_DISCi = d.REG_DPL
+                        WHERE COD_DISCi = '{$codDisciplina}'
+                        GROUP BY COD_ALUNO, COD_DISCi, NOM_DPL
+                    ) as mm
+                    GROUP BY mm.COD_DISCi, mm.NOM_DPL";
+
+            $disciplina = $this->mssqlConnection->fetch($sql);
+
+            if (!isset($disciplina['NOM_DPL']) || !isset($disciplina['qtd'])) {
+                return false;
+            }
+
+            $ret = [
+                'nome' => iconv('ISO-8859-1', 'UTF-8', $disciplina['NOM_DPL']),
+                'qtd' => iconv('ISO-8859-1', 'UTF-8', $disciplina['qtd'])
+            ];
+
+            return $ret;
         } catch (\Exception $e) {
             if (config('app.debug')) {
                 throw $e;

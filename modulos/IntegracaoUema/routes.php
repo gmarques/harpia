@@ -17,11 +17,16 @@ Route::group(['prefix' => 'integracaouema', 'middleware' => ['auth']], function 
         Route::get('/migrar/{id}', '\Modulos\IntegracaoUema\Http\Controllers\IntegracoesOfertasDisciplinas@getMigrar')->name('integracaouema.ofertas.migrar');
     });
 
-    // Rotas de funções assíncronas.
+    // Rotas das funções assíncronas.
     Route::group(['prefix' => 'async'], function () {
         Route::group(['prefix' => 'cursos'], function () {
             Route::get('/{nomecurso}', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesCursos@getNomeCurso')->name('integracaouema.async.cursos.getnomecurso');
             Route::post('/integrar', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesCursos@postIntegrar')->name('integracaouema.async.cursos.integrar');
+        });
+
+        Route::group(['prefix' => 'ofertas'], function () {
+            Route::get('/{coddisciplina}/{semestre}/{ano}', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesOfertas@getDisciplinaInfo')->name('integracaouema.async.ofertas.getdisciplinainfo');
+            Route::post('/integrar', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesOfertas@postIntegrar')->name('integracaouema.async.ofertas.integrar');
         });
     });
 });
