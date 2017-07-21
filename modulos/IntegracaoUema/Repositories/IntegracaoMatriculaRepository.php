@@ -333,8 +333,6 @@ class IntegracaoMatriculaRepository extends BaseRepository
 
             $sql .= " WHERE COD_ALUNO = '{$codProg}' AND COD_DISCi='{$codDisc}' ";
 
-            dd($sql);
-
             return $this->mssqlConnection->query($sql);
         } catch (\Exception $e) {
             if (config('app.debug')) {
