@@ -30,6 +30,13 @@ class MSSQLConnection
         return $this;
     }
 
+    /**
+     * Executa a querie no SQLServer e retorna um resultado(somente um registro)
+     *
+     * @param $sql
+     *
+     * @return mixed|string
+     */
     public function fetch($sql)
     {
         try {
@@ -41,6 +48,11 @@ class MSSQLConnection
         }
     }
 
+    /**
+     * Executa a querie no SQLServer e retorna todos os resultados(mais de um registro)
+     * @param $sql
+     * @return array|string
+     */
     public function fetchAll($sql)
     {
         try {

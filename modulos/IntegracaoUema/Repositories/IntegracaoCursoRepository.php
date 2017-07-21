@@ -16,6 +16,11 @@ class IntegracaoCursoRepository extends BaseRepository
         $this->mssqlConnection = $connection;
     }
 
+    /**
+     * Retorna a lista de cursos fazendo right join com a tabela integracao curso(integracao uema)
+     *
+     * @return mixed
+     */
     public function getCursosGraduacaoTecnologos()
     {
         return $this->model->select('itc_id', 'itc_codigo_prog', 'itc_nome_curso_prog', 'crs_id', 'crs_nome')
@@ -25,6 +30,11 @@ class IntegracaoCursoRepository extends BaseRepository
             ->get();
     }
 
+    /**
+     * Busca todas as turmas dos que estao integrados com a tabela integracao curso(integracao uema)
+     *
+     * @return mixed
+     */
     public function getTurmasCursosIntegrados()
     {
         return $this->model->select('crs_id', 'crs_nome', 'trm_id', 'trm_nome', 'per_nome')
@@ -37,7 +47,13 @@ class IntegracaoCursoRepository extends BaseRepository
     }
 
     /**
-     * Funções que buscam dados nas tabelas da UEMA
+     * Busca o nome do curso nas tabelas do sitema academico da uema conforme o nome/codigo do curso
+     *
+     * @param $nomecurso
+     *
+     * @return mixed/
+     *
+     * @throws \Exception
      */
     public function uemaGetNomeCurso($nomecurso)
     {

@@ -3,8 +3,6 @@
 namespace Modulos\IntegracaoUema\Repositories;
 
 use Modulos\Academico\Models\Turma;
-use Modulos\Academico\Repositories\TurmaRepository;
-use Modulos\IntegracaoUema\Repositories\IntegracaoCursoRepository;
 use Modulos\Core\Repository\BaseRepository;
 use Modulos\IntegracaoUema\Models\IntegracaoMatricula;
 use Modulos\IntegracaoUema\Util\MSSQLConnection;
@@ -29,10 +27,10 @@ class IntegracaoMatriculaRepository extends BaseRepository
     }
 
     /**
+     * Busca todas os alunos matriculados na turma e polo fazendo right join com tabela de integração UEMA
+     *
      * @param $turmaid
      * @param $poloid
-     *
-     * Busca todas os alunos matrículados na turma por polo fazendo join com tabela de integração UEMA
      *
      * @return mixed
      */
@@ -51,9 +49,9 @@ class IntegracaoMatriculaRepository extends BaseRepository
     }
 
     /**
-     * @param $turmaid
+     * Busca todas os alunos matriculados na turma fazendo right join com tabela de integração UEMA
      *
-     * Busca todas os alunos matrículados na turma fazendo join com tabela de integração UEMA
+     * @param $turmaid
      *
      * @return mixed
      */
@@ -72,6 +70,16 @@ class IntegracaoMatriculaRepository extends BaseRepository
         return $matriculas;
     }
 
+    /**
+     * Faz a integração/sincronização de todas os matriculados no curso com suas matriculas na PROG/UEMA
+     * A busca do aluno na PROG é feita através do CPF do aluno
+     *
+     * @param Turma $turma
+     *
+     * @return bool
+     *
+     * @throws \Exception
+     */
     public function sincronizarMatriculasTurmaUema(Turma $turma)
     {
         $cursointegrado = $this->integracaoCursoRepository->search([['itc_crs_id', '=', $turma->ofertacurso->curso->crs_id]])->first();
@@ -132,18 +140,32 @@ class IntegracaoMatriculaRepository extends BaseRepository
     }
 
     /**
-     * Funções que buscam dados nas tabelas da UEMA
+     * Busca a matricula do aluno na oferta de disciplina junto com suas notas fazendo right join com tabela de integracao matricula
+     *
+     * @param $ofertaid
+     * @param $matriculaid
+     *
+     * @return mixed
      */
+    public function getMatriculaJoinNotasByOferta($ofertaid, $matriculaid)
+    {
+        $matriculas = $this->model->select('itm_mat_id', 'itm_codigo_prog', 'itm_polo', 'mof_nota1', 'mof_nota2', 'mof_nota3', 'mof_conceito', 'mof_recuperacao', 'mof_final', 'mof_mediafinal')
+            ->join('acd_matriculas_ofertas_disciplinas', 'mof_mat_id', '=', 'itm_mat_id')
+            ->where('mof_ofd_id', $ofertaid)
+            ->where('itm_mat_id', $matriculaid)
+            ->first();
+
+        return $matriculas;
+    }
 
     /**
-     * @param $codProg
+     * Busca as informações do aluno de acordo com a matrícula na PROG/UEMA
      *
-     * Busca as informações do aluno de acordo com a matrícula na prog
+     * @param $codProg
      *
      * @return mixed
      *
      * @throws \Exception
-     *
      */
     public function uemaGetAlunoByCodigoProg($codProg)
     {
@@ -174,12 +196,12 @@ class IntegracaoMatriculaRepository extends BaseRepository
     }
 
     /**
+     * Busca o aluno na PROG através do CPF, curso, ano e semestre de ingresso
+     *
      * @param $cpf
      * @param $codcurso
      * @param $semestre
      * @param $ano
-     *
-     * Busca o aluno na PROG através
      *
      * @return array|bool
      *
@@ -220,6 +242,18 @@ class IntegracaoMatriculaRepository extends BaseRepository
         }
     }
 
+    /**
+     * Busca as notas do aluno na disciplina nas tabelas da PROG/UEMA
+     *
+     * @param $codAluno
+     * @param $codDisciplina
+     * @param $semestre
+     * @param $ano
+     *
+     * @return array|bool
+     *
+     * @throws \Exception
+     */
     public function uemaGetAlunoNotasByDisciplinaProg($codAluno, $codDisciplina, $semestre, $ano)
     {
         try {
@@ -257,17 +291,17 @@ class IntegracaoMatriculaRepository extends BaseRepository
         }
     }
 
-    public function getMatriculaJoinNotasByOferta($ofertaid, $matriculaid)
-    {
-        $matriculas = $this->model->select('itm_mat_id', 'itm_codigo_prog', 'itm_polo', 'mof_nota1', 'mof_nota2', 'mof_nota3', 'mof_conceito', 'mof_recuperacao', 'mof_final', 'mof_mediafinal')
-            ->join('acd_matriculas_ofertas_disciplinas', 'mof_mat_id', '=', 'itm_mat_id')
-            ->where('mof_ofd_id', $ofertaid)
-            ->where('itm_mat_id', $matriculaid)
-            ->first();
 
-        return $matriculas;
-    }
-
+    /**
+     * Atualiza as notas do aluno na PROG/UEMA
+     *
+     * @param $ofertaid
+     * @param $matriculaid
+     *
+     * @return bool|\PDOStatement|string
+     *
+     * @throws \Exception
+     */
     public function uemaSetmigrarNotasOfertaAluno($ofertaid, $matriculaid)
     {
         $oferta = $this->integracaoOfertaDisciplinaRepository->getDisciplinaJoinOferta($ofertaid);

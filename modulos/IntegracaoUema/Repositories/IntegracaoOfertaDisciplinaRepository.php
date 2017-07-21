@@ -16,6 +16,13 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         $this->mssqlConnection = $connection;
     }
 
+    /**
+     * Busca todos os matriculados na oferta fazendo left join com a tabela de integracao matriculas
+     *
+     * @param $ofertaid
+     *
+     * @return mixed
+     */
     public function getMatriculadosByOferta($ofertaid)
     {
         return $this->model->select('alu_id', 'pes_nome', 'acd_matriculas_ofertas_disciplinas.*', 'itm_codigo_prog', 'itm_polo')
@@ -30,6 +37,13 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
             ->toArray();
     }
 
+    /**
+     * Busca todas as ofertas de disciplinas de uma turma sendo integrada ou nao com a tabela de integracao oferta disciplina
+     *
+     * @param $turmaid
+     *
+     * @return mixed
+     */
     public function getOfertasByTurma($turmaid)
     {
         return $this->model->select('ito_id', 'ito_codigo_prog', 'ito_disciplina_prog', 'ofd_id', 'per_id', 'per_nome', 'dis_nome')
@@ -41,6 +55,13 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         ->get();
     }
 
+    /**
+     * Agrupa as disciplina por periodo letivo
+     *
+     * @param $disciplinas
+     *
+     * @return array
+     */
     public function groupDisciplinasByPeriodosLetivos($disciplinas)
     {
         $periodos = [];
@@ -64,6 +85,13 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         return $periodos;
     }
 
+    /**
+     * Busca disciplina oferecida fazendo join com a tabela integracao oferta disciplina
+     *
+     * @param $ofertaid
+     *
+     * @return mixed
+     */
     public function getDisciplinaJoinOferta($ofertaid)
     {
         return $this->model->select('ito_id', 'ito_codigo_prog', 'ito_disciplina_prog', 'ofd_id', 'per_id', 'per_nome')
@@ -74,7 +102,15 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
     }
 
     /**
-     * Funções que buscam dados nas tabelas da UEMA
+     * Retorna o quantitativo de alunos matriculados na PROG/UEMA na oferta da disciplina
+     *
+     * @param $codDisciplina
+     * @param $semestre
+     * @param $ano
+     *
+     * @return bool|string
+     *
+     * @throws \Exception
      */
     public function uemaGetCountMatriculadosByOferta($codDisciplina, $semestre, $ano)
     {
@@ -100,6 +136,17 @@ class IntegracaoOfertaDisciplinaRepository extends BaseRepository
         }
     }
 
+    /**
+     * Busca as informações das disciplina na PROG/UEMA
+     *
+     * @param $codDisciplina
+     * @param $semestre
+     * @param $ano
+     *
+     * @return array|bool
+     *
+     * @throws \Exception
+     */
     public function uemaGetDisciplinaInfo($codDisciplina, $semestre, $ano)
     {
         try {
