@@ -26,7 +26,7 @@ class IntegrarOfertaRequest extends BaseRequest
         return [
             'ofd_id' => 'required',
             'codigo_prog' => 'required',
-            'ito_disciplina_prog' => 'required'
+            'disciplina_prog' => 'required'
         ];
     }
 }
