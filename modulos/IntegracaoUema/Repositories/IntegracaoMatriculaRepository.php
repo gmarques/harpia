@@ -227,7 +227,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
                     FROM [carlitosan].[m{$semestre}{$ano}]
                     WHERE
                       COD_DISCi = '{$codDisciplina}'
-                      AND COD_ALUNO like ('%{$codAluno}%')";
+                      AND COD_ALUNO = '{$codAluno}'";
 
             $aluno = $this->mssqlConnection->fetch($sql);
 
@@ -286,18 +286,20 @@ class IntegracaoMatriculaRepository extends BaseRepository
             $sql = "UPDATE [carlitosan].[m{$semestre}{$ano}] SET ";
 
             if (!is_null($matricula->mof_nota1)) {
-                $sql .= " NOTA01='{$matricula->mof_nota1}', NOTA02='{$matricula->mof_nota1}', NOTA03='{$matricula->mof_nota1}', NOTA04='-1' ";
+                $sql .= " NOTA01='{$matricula->mof_nota1}', NOTA02='{$matricula->mof_nota1}', NOTA03='{$matricula->mof_nota1}', NOTA04='-1', ";
             }
 
             if (!is_null($matricula->mof_final)) {
-                $sql .= " NOTA05='{$matricula->mof_final}' ";
+                $sql .= " NOTA05='{$matricula->mof_final}', ";
             }
 
             if (!is_null($matricula->mof_mediafinal)) {
                 $sql .= " media='{$matricula->mof_mediafinal}' ";
             }
 
-            $sql .= " WHERE COD_ALUNO like ('%{$codProg}%') AND COD_DISCi='{$codDisc}' ";
+            $sql .= " WHERE COD_ALUNO = '{$codProg}' AND COD_DISCi='{$codDisc}' ";
+
+            dd($sql);
 
             return $this->mssqlConnection->query($sql);
         } catch (\Exception $e) {

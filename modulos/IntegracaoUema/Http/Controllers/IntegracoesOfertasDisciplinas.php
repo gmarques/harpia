@@ -76,6 +76,7 @@ class IntegracoesOfertasDisciplinas extends BaseController
         }
 
         $oferta = [
+            'ofd_id' => $ofertaDisciplina->ofd_id,
             'dis_nome' => $ofertaDisciplina->modulodisciplina->disciplina->dis_nome,
             'trm_nome' => $ofertaDisciplina->turma->trm_nome,
             'per_nome' => $ofertaDisciplina->periodoletivo->per_nome,
@@ -90,6 +91,10 @@ class IntegracoesOfertasDisciplinas extends BaseController
         foreach ($matriculados as $mat => $matricula) {
             $notasProg = $this->integracaoMatriculaRepository->uemaGetAlunoNotasByDisciplinaProg($matricula['itm_codigo_prog'], $ofertaIntegrada->ito_codigo_prog, $semestre, $ano);
 
+            $matriculados[$mat]['mof_nota1'] = number_format((float) $matriculados[$mat]['mof_nota1'], 2);
+            $matriculados[$mat]['mof_final'] = number_format((float) $matriculados[$mat]['mof_final'], 2);
+            $matriculados[$mat]['mof_mediafinal'] = number_format((float) $matriculados[$mat]['mof_mediafinal'], 2);
+
             $matriculados[$mat]['prog_nota1'] = null;
             $matriculados[$mat]['prog_final'] = null;
             $matriculados[$mat]['prog_media'] = null;
@@ -98,6 +103,10 @@ class IntegracoesOfertasDisciplinas extends BaseController
                 $matriculados[$mat]['prog_nota1'] = number_format((float) $notasProg['nota1'], 2);
                 $matriculados[$mat]['prog_final'] = number_format((float) $notasProg['nota5'], 2);
                 $matriculados[$mat]['prog_media'] = number_format((float) $notasProg['media'], 2);
+            }
+
+            if ($matricula['itm_codigo_prog'] == '15PESQ08') {
+                //                dd($matriculados[$mat]);
             }
         }
 

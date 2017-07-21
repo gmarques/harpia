@@ -108,6 +108,8 @@
 
             if (!ofd_id || !codigo_prog || !disciplina_prog) {
                 toastr.error('Todas as informções da disciplina são obrigatórios', '', {timeOut: 8000, progressBar: true});
+
+                return;
             }
 
             var data = {

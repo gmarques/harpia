@@ -2,22 +2,30 @@
 
 namespace Modulos\IntegracaoUema\Http\Controllers\Async;
 
+use Modulos\Academico\Repositories\OfertaDisciplinaRepository;
 use Modulos\Academico\Repositories\TurmaRepository;
 use Modulos\IntegracaoUema\Repositories\IntegracaoMatriculaRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Modulos\IntegracaoUema\Repositories\IntegracaoOfertaDisciplinaRepository;
 
 class IntegracoesMatriculas
 {
     protected $integracaoMatriculaRepository;
+    protected $integracaoOfertaDisciplinaRepository;
     protected $turmaRepository;
+    protected $ofertaDisciplinaRepository;
 
     public function __construct(
         IntegracaoMatriculaRepository $integracaoMatriculaRepository,
-        TurmaRepository $turmaRepository)
-    {
+        IntegracaoOfertaDisciplinaRepository $integracaoOfertaDisciplinaRepository,
+        TurmaRepository $turmaRepository,
+        OfertaDisciplinaRepository $ofertaDisciplinaRepository
+    ) {
         $this->integracaoMatriculaRepository = $integracaoMatriculaRepository;
+        $this->integracaoOfertaDisciplinaRepository = $integracaoOfertaDisciplinaRepository;
         $this->turmaRepository = $turmaRepository;
+        $this->ofertaDisciplinaRepository = $ofertaDisciplinaRepository;
     }
 
     /**
@@ -115,6 +123,27 @@ class IntegracoesMatriculas
             }
 
             return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            return new JsonResponse(null, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function postMigrarNotasTurma(Request $request)
+    {
+        try {
+            $oferta = $this->ofertaDisciplinaRepository->find($request->ofd_id);
+
+            $matriculados = $this->integracaoOfertaDisciplinaRepository->getMatriculadosByOferta($oferta->ofd_id);
+
+            foreach ($matriculados as $matriculado) {
+                $this->integracaoMatriculaRepository->uemaSetmigrarNotasOfertaAluno($request->ofd_id, $matriculado['mof_mat_id']);
+            }
+
+            return new JsonResponse(['result' => 'OK']);
         } catch (\Exception $e) {
             if (config('app.debug')) {
                 throw $e;

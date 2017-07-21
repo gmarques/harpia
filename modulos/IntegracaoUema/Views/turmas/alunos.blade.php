@@ -106,6 +106,8 @@
 
             if (!mat_id || !codigo_prog || !nome_prog || !polo) {
                 toastr.error('As informações da matrícula são obrigatórias', '', {timeOut: 5000, progressBar: true});
+
+                return;
             }
 
             var data = {

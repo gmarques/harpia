@@ -12,7 +12,7 @@
     @if(!is_null($matriculados))
         <div class="row margin-bottom">
             <div class="col-md-12 text-right">
-                <a href="#" class="btn btn-lg btn-success"><i class="fa fa-refresh"></i> Sincronizar todas as notas</a>
+                <a href="#" class="btn btn-lg btn-success btn-sync-notas" data-ofd_id="{{$oferta['ofd_id']}}"><i class="fa fa-refresh"></i> Sincronizar todas as notas</a>
             </div>
         </div>
 
@@ -44,11 +44,26 @@
                                 <td>{{$matricula['itm_polo']}}</td>
                                 <td>{{$matricula['pes_nome']}}</td>
                                 <td>{{$matricula['mof_nota1']}}</td>
-                                <td>{{$matricula['prog_nota1']}}</td>
+                                <td>@if(!is_null($matricula['prog_nota1']))
+                                        {{$matricula['prog_nota1']}}
+                                    @else
+                                        <span data-toggle="tooltip" class="badge bg-red">FM</span>
+                                    @endif
+                                </td>
                                 <td>{{$matricula['mof_final']}}</td>
-                                <td>{{$matricula['prog_final']}}</td>
+                                <td>@if(!is_null($matricula['prog_final']))
+                                        {{$matricula['prog_final']}}
+                                    @else
+                                        <span data-toggle="tooltip" class="badge bg-red">FM</span>
+                                    @endif
+                                </td>
                                 <td>{{$matricula['mof_mediafinal']}}</td>
-                                <td>{{$matricula['prog_media']}}</td>
+                                <td>@if(!is_null($matricula['prog_media']))
+                                        {{$matricula['prog_media']}}
+                                    @else
+                                        <span data-toggle="tooltip" class="badge bg-red">FM</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <span
                                         data-toggle="tooltip"
@@ -59,6 +74,7 @@
                                 <td>
                                     @if(
                                         isset($matricula['itm_codigo_prog'])
+                                        && !is_null($matricula['prog_nota1'])
                                         && $matricula['mof_nota1'] != null
                                         && $matricula['mof_nota1'] != $matricula['prog_nota1']
                                     )
@@ -93,6 +109,8 @@
 
             if (!ofd_id || !mat_id) {
                 toastr.error('Todas as informções da matrícula são obrigatórios', '', {timeOut: 8000, progressBar: true});
+
+                return;
             }
 
             var data = {
@@ -105,9 +123,39 @@
                 if(!$.isEmptyObject(response)) {
                     toastr.success('Notas migradas com sucesso', '', {timeOut: 5000, progressBar: true});
 
-//                    currentTarget.attr('disabled', 'disabled').addClass('disabled');
+                    currentTarget.remove();
                 } else {
                     toastr.error('Erro ao tentar integrar as informações da disciplina', '', {timeOut: 5000, progressBar: true});
+                }
+            });
+        });
+
+        $(".btn-sync-notas").click(function(e) {
+            e.preventDefault();
+
+            var token = "{{ csrf_token() }}";
+            var currentTarget = $(e.currentTarget);
+
+            var ofd_id = currentTarget.data('ofd_id');
+
+            if (!ofd_id) {
+                toastr.error('A oferta da matrícula é obrigatória', '', {timeOut: 8000, progressBar: true});
+
+                return;
+            }
+
+            var data = {
+                ofd_id: ofd_id,
+                _token: token
+            };
+
+            $.harpia.httppost('{{url("/")}}/integracaouema/async/matriculas/migrarnotasoferta', data).done(function (response) {
+                if(!$.isEmptyObject(response)) {
+                    toastr.success('Notas migradas com sucesso', '', {timeOut: 3000, progressBar: true});
+
+                     setTimeout(function(){ location.reload(); }, 3000);
+                } else {
+                    toastr.error('Erro ao tentar migrar as notas', '', {timeOut: 5000, progressBar: true});
                 }
             });
         });

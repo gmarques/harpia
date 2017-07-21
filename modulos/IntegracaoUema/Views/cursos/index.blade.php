@@ -54,6 +54,8 @@
 
             if (!crs_id || !codigo_prog || !nome_curso) {
                 toastr.error('O código do curso é obrigatório', '', {timeOut: 5000, progressBar: true});
+
+                return;
             }
 
             var data = {
