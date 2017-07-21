@@ -28,6 +28,12 @@
             var linhaSelecionada = $(e.currentTarget).closest('tr');
             var codCurso = e.currentTarget.value;
 
+            if (!codCurso) {
+                toastr.error('O código do curso é obrigatório', '', {timeOut: 5000, progressBar: true});
+
+                return;
+            }
+
             $.harpia.httpget('{{url("/")}}/integracaouema/async/cursos/' + codCurso).done(function (response) {
                 if(!$.isEmptyObject(response)) {
                     linhaSelecionada.find('.fc-nome-curso-prog').val(response);

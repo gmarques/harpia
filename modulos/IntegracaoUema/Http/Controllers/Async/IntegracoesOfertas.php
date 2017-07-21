@@ -2,8 +2,8 @@
 
 namespace Modulos\IntegracaoUema\Http\Controllers\Async;
 
+use Modulos\IntegracaoUema\Http\Requests\IntegrarOfertaRequest;
 use Modulos\IntegracaoUema\Repositories\IntegracaoOfertaDisciplinaRepository;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class IntegracoesOfertas
@@ -34,7 +34,7 @@ class IntegracoesOfertas
         }
     }
 
-    public function postIntegrar(Request $request)
+    public function postIntegrar(IntegrarOfertaRequest $request)
     {
         try {
             $integracaoOferta = $this->integracaoOfertaDisciplinaRepository->search([['ito_ofd_id', '=', $request->ofd_id]])->first();

@@ -32,7 +32,7 @@ Route::group(['prefix' => 'integracaouema', 'middleware' => ['auth']], function 
         Route::group(['prefix' => 'matriculas'], function () {
             Route::get('/{codprog}', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@getMatriculaInfo')->name('integracaouema.async.matriculas.getmatriculainfo');
             Route::post('/integrar', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@postIntegrar')->name('integracaouema.async.matriculas.integrar');
-            Route::post('/integrarturma', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@postIntegrarTurma')->name('integracaouema.async.matriculas.integrarturma');
+            Route::post('/integrarmatriculasturma', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@postIntegrarMatriculasTurma')->name('integracaouema.async.matriculas.integrarmatriculasturma');
             Route::post('/migrarnotaaluno', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@postMigrarNotaAluno')->name('integracaouema.async.matriculas.migrarnotaaluno');
             Route::post('/migrarnotasoferta', '\Modulos\IntegracaoUema\Http\Controllers\Async\IntegracoesMatriculas@postMigrarNotasTurma')->name('integracaouema.async.matriculas.migrarnotasoferta');
         });

@@ -64,6 +64,12 @@ class MSSQLConnection
         }
     }
 
+    /**
+     * Executa uma query
+     *
+     * @param $sql
+     * @return \PDOStatement|string
+     */
     public function query($sql)
     {
         try {

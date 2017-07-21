@@ -140,7 +140,7 @@
                 _token: token
             };
 
-            $.harpia.httppost('{{url("/")}}/integracaouema/async/matriculas/integrarturma', data).done(function (response) {
+            $.harpia.httppost('{{url("/")}}/integracaouema/async/matriculas/integrarmatriculasturma', data).done(function (response) {
                 if(!$.isEmptyObject(response)) {
                     toastr.success('Informações integradas com sucesso', '', {timeOut: 3000, progressBar: true});
 

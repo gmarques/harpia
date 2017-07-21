@@ -4,8 +4,11 @@ namespace Modulos\IntegracaoUema\Http\Controllers\Async;
 
 use Modulos\Academico\Repositories\OfertaDisciplinaRepository;
 use Modulos\Academico\Repositories\TurmaRepository;
+use Modulos\IntegracaoUema\Http\Requests\IntegrarMatriculaRequest;
+use Modulos\IntegracaoUema\Http\Requests\IntegrarMatriculasTurmaRequest;
+use Modulos\IntegracaoUema\Http\Requests\MigrarNotaAlunoRequest;
+use Modulos\IntegracaoUema\Http\Requests\MigrarNotasAlunosOfertaRequest;
 use Modulos\IntegracaoUema\Repositories\IntegracaoMatriculaRepository;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Modulos\IntegracaoUema\Repositories\IntegracaoOfertaDisciplinaRepository;
 
@@ -56,7 +59,7 @@ class IntegracoesMatriculas
         }
     }
 
-    public function postIntegrar(Request $request)
+    public function postIntegrar(IntegrarMatriculaRequest $request)
     {
         try {
             $matricula = $this->integracaoMatriculaRepository->search([['itm_mat_id', '=', $request->mat_id]])->first();
@@ -88,7 +91,7 @@ class IntegracoesMatriculas
         }
     }
 
-    public function postIntegrarTurma(Request $request)
+    public function postIntegrarMatriculasTurma(IntegrarMatriculasTurmaRequest $request)
     {
         try {
             $turma = $this->turmaRepository->find($request->trm_id);
@@ -113,7 +116,7 @@ class IntegracoesMatriculas
         }
     }
 
-    public function postMigrarNotaAluno(Request $request)
+    public function postMigrarNotaAluno(MigrarNotaAlunoRequest $request)
     {
         try {
             $sync = $this->integracaoMatriculaRepository->uemaSetmigrarNotasOfertaAluno($request->ofd_id, $request->mat_id);
@@ -132,7 +135,7 @@ class IntegracoesMatriculas
         }
     }
 
-    public function postMigrarNotasTurma(Request $request)
+    public function postMigrarNotasTurma(MigrarNotasAlunosOfertaRequest $request)
     {
         try {
             $oferta = $this->ofertaDisciplinaRepository->find($request->ofd_id);

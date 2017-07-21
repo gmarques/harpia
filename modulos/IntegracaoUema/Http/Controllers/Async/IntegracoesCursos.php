@@ -3,8 +3,8 @@
 namespace Modulos\IntegracaoUema\Http\Controllers\Async;
 
 use Modulos\IntegracaoUema\Repositories\IntegracaoCursoRepository;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Modulos\IntegracaoUema\Http\Requests\IntegrarCursoRequest;
 
 class IntegracoesCursos
 {
@@ -34,7 +34,7 @@ class IntegracoesCursos
         }
     }
 
-    public function postIntegrar(Request $request)
+    public function postIntegrar(IntegrarCursoRequest $request)
     {
         try {
             $integracaoCurso = $this->integracaoCursoRepository->search([['itc_crs_id', '=', $request->crs_id]])->first();
