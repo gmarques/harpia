@@ -42,6 +42,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
             ->join('gra_pessoas', 'alu_pes_id', '=', 'pes_id')
             ->where('mat_trm_id', $turmaid)
             ->where('mat_pol_id', $poloid)
+            ->where('mat_situacao', '<>', 'desistente')
             ->orderby('pes_nome')
             ->get()->toArray();
 
@@ -65,6 +66,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
                 $join->on('pes_id', '=', 'doc_pes_id')->where('doc_tpd_id', '=', 2, 'and', true);
             })
             ->where('mat_trm_id', $turmaid)
+            ->where('mat_situacao', '<>', 'desistente')
             ->get()->toArray();
 
         return $matriculas;
