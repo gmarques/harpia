@@ -71,6 +71,12 @@
             var periodo = linhaSelecionada.data('periodo');
             var ano = linhaSelecionada.data('ano');
 
+            if (!coddisciplina) {
+                toastr.error('O código da disciplina é obrigatório.', '', {timeOut: 8000, progressBar: true});
+
+                return;
+            }
+
             $.harpia.httpget('{{url("/")}}/integracaouema/async/ofertas/' + coddisciplina + '/' + periodo + '/' + ano).done(function (response) {
                 if(!$.isEmptyObject(response)) {
                     linhaSelecionada.find('.fc-disciplina-prog').val(response.nome);

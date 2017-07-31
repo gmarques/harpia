@@ -77,6 +77,12 @@
             var linhaSelecionada = $(e.currentTarget).closest('tr');
             var codProg = e.currentTarget.value;
 
+            if (!codProg) {
+                toastr.error('O código do aluno é obrigatório.', '', {timeOut: 5000, progressBar: true});
+
+                return;
+            }
+
             $.harpia.httpget('{{url("/")}}/integracaouema/async/matriculas/' + codProg).done(function (response) {
                 if(!$.isEmptyObject(response)) {
                     linhaSelecionada.find('.fc-nome-prog').val(response.nome);

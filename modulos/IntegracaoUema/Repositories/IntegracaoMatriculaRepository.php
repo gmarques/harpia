@@ -42,6 +42,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
             ->join('gra_pessoas', 'alu_pes_id', '=', 'pes_id')
             ->where('mat_trm_id', $turmaid)
             ->where('mat_pol_id', $poloid)
+            ->where('mat_situacao', '<>', 'desistente')
             ->orderby('pes_nome')
             ->get()->toArray();
 
@@ -65,6 +66,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
                 $join->on('pes_id', '=', 'doc_pes_id')->where('doc_tpd_id', '=', 2, 'and', true);
             })
             ->where('mat_trm_id', $turmaid)
+            ->where('mat_situacao', '<>', 'desistente')
             ->get()->toArray();
 
         return $matriculas;
@@ -170,6 +172,8 @@ class IntegracaoMatriculaRepository extends BaseRepository
     public function uemaGetAlunoByCodigoProg($codProg)
     {
         try {
+            $codProg = iconv('UTF-8', 'ISO-8859-1', $codProg);
+
             $sql = "SELECT COD_ALU, NOM_ALU, polo
                     FROM [carlitosan].[ALUNOs]
                     WHERE COD_ALU = '{$codProg}'";
@@ -257,6 +261,8 @@ class IntegracaoMatriculaRepository extends BaseRepository
     public function uemaGetAlunoNotasByDisciplinaProg($codAluno, $codDisciplina, $semestre, $ano)
     {
         try {
+            $codAluno = iconv('UTF-8', 'ISO-8859-1', $codAluno);
+
             $sql = "SELECT COD_ALUNO, polo, COD_DISCi, NOTA01, NOTA02, NOTA03, NOTA04, NOTA05, MEDIA
                     FROM [carlitosan].[m{$semestre}{$ano}]
                     WHERE
@@ -315,6 +321,7 @@ class IntegracaoMatriculaRepository extends BaseRepository
         $semestre = substr($oferta->per_nome, -1);
         $ano = substr($oferta->per_nome, -4, 2);
         $codProg = $matricula->itm_codigo_prog;
+        $codProg = iconv('UTF-8', 'ISO-8859-1', $codProg);
 
         try {
             $sql = "UPDATE [carlitosan].[m{$semestre}{$ano}] SET ";
